@@ -1,6 +1,6 @@
 # Caspar App
 
-Tried to keep things simple as much as possible. Implemented the skeleton for the solution. There still few imporoment needed that been highlited in the Assumptions sections.
+Tried to keep things simple as much as possible. Implemented the skeleton for the problem. Application and infra is in the same repository.
 
 
 Project structure  
@@ -24,7 +24,7 @@ Project structure
 
 ```
 
-Project has devided into three parts  
+Project is divided into three parts  
 -- `app` - Python applicaiton that connects with Redis and PostgresDB, also contains Dockerfile.  
 -- `infra` - contains Terraform IaC and Kubernetes manifest for application.  
 -- `.github` - CI/CD using github actions.  Deploying EC2 instance and using same as github self-hosted runner for build and deploy.  
