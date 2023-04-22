@@ -1,0 +1,51 @@
+name: Python package
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_image:
+        type: boolean
+        default: false
+    deploy_app:
+      type: boolean
+      default: false
+    patch_deployment:
+      type: boolean
+      default: false
+    image_tag:
+      type: string
+      default: latest
+
+
+jobs:
+  build:
+    # EC2 instance will be used as runner
+    runs-on: self-hosted
+    # run only when build_image input provided
+    if: ${{ inputs.build_image }}
+    steps:
+      - uses: actions/checkout@v3
+        # for simplicity using "latest" as a tag. Instead of this we can use git SHA etc.
+        # To update deployment image further can use "kubectl set image"
+      - name: Build image
+        run: docker build -t caspar-app:latest -f app/docker/Dockerfile
+
+  deploy:
+    runs-on: self-hosted
+    # This job will run only when build_image input provided
+    if: ${{ inputs.deploy_app }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy latest image
+        run: kubectl apply -f infra/kubernetes/caspar-app.yaml
+
+
+  # Job to update deployment image file
+  patch_deployment:
+    runs-on: self-hosted
+    # This job will run only when build_image input provided
+    if: ${{ inputs.patch_deployment }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy latest image
+        run: kubectl set image deployment/caspar-app caspar-app=caspar-app:${{ inputs.image_tag}}
